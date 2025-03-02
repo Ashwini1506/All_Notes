@@ -1027,5 +1027,54 @@ Nested Showdom -->one Host with multiple root
 
 How to find Using selenium --> JavaScripExecut
 How to locate --> 1. use Css Selector 
-                  2. Go to Console and Write document.querySelector('Host').Shadowdom.querySelector('root')		  
+                  2. Go to Console and Write document.querySelector('Host').Shadowdom.querySelector('root')	
+*********** Password protected excel file reading ***********************
+You might need to use a third-party library, like Aspose.Cells or ExcelDecrypt, to decrypt the file before we can read it.
+
+public class AutomationScript {
+    public static void main(String[] args) throws Exception {
+        // Read credentials from Excel
+        ExcelReader reader = new ExcelReader();
+        String[] credentials = reader.readCredentials("path/to/excel/file.xlsx");
+        String username = credentials[0];
+        String password = credentials[1];
+        
+        // Set up WebDriver (make sure to set the correct path for the ChromeDriver executable)
+        System.setProperty("webdriver.chrome.driver", "path/to/chromedriver");
+        WebDriver driver = new ChromeDriver();
+        
+        // Open the login page
+        driver.get("http://example.com/login");
+        
+        // Locate username and password fields, and the login button
+        WebElement usernameField = driver.findElement(By.id("username"));
+        WebElement passwordField = driver.findElement(By.id("password"));
+        WebElement loginButton = driver.findElement(By.id("loginButton"));
+        
+        // Enter credentials and click login
+        usernameField.sendKeys(username);
+        passwordField.sendKeys(password);
+        loginButton.click();
+        
+        // Add some wait time or assertions here to verify successful login
+        
+        // Close the browser
+        driver.quit();
+    }
+
+    public static class ExcelReader {
+        public String[] readCredentials(String excelFilePath) throws IOException {
+            FileInputStream file = new FileInputStream(excelFilePath);
+            Workbook workbook = new XSSFWorkbook(file);
+            Sheet sheet = workbook.getSheetAt(0); // Get first sheet
+            Row row = sheet.getRow(1); // Assume row 1 has username and password
+            String username = row.getCell(0).getStringCellValue(); // First column for username
+            String password = row.getCell(1).getStringCellValue(); // Second column for password
+            workbook.close();
+            file.close();
+            return new String[] { username, password };
+        }
+    }
+}
+
 			  
